@@ -1,33 +1,44 @@
-import React, { useState, useEffect } from 'react';
-// getAPIHealth is defined in our axios-services directory index.js
-// you can think of that directory as a collection of api adapters
-// where each adapter fetches specific info from our express server's /api route
-import { getAPIHealth } from '../axios-services';
-import '../style/App.css';
+import { useEffect, useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+// import './App.css';
+import { Home, Navbar } from '.';
+import { Signup, Login } from './AuthForm';
+// import { me } from './axios-services/auth';
+import { useAuth } from '../custom-hooks';
 
-const App = () => {
-  const [APIHealth, setAPIHealth] = useState('');
+function App() {
+  const { token, isLoggedIn, logout, user } = useAuth();
+  // const [user, setUser] = useState({});
 
-  useEffect(() => {
-    // follow this pattern inside your useEffect calls:
-    // first, create an async function that will wrap your axios service adapter
-    // invoke the adapter, await the response, and set the data
-    const getAPIStatus = async () => {
-      const { healthy } = await getAPIHealth();
-      setAPIHealth(healthy ? 'api is up! :D' : 'api is down :/');
-    };
+  // const [token, settoken] = useState(localStorage['fit-token'] || '');
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // second, after you've defined your getter above
-    // invoke it immediately after its declaration, inside the useEffect callback
-    getAPIStatus();
-  }, []);
+  // useEffect(() => {
+  //   if (token) {
+  //     const getMe = async () => {
+  //       const result = await me(token);
+  //       setUser(result);
+  //     };
+  //     getMe();
+  //   }
+  // }, []);
 
+  // console.log(`This is user: ${user.username} loggedIn?: ${isLoggedIn}`);
   return (
-    <div className="app-container">
-      <h1>Hello, World!</h1>
-      <p>API Status: {APIHealth}</p>
+    <div className='App'>
+      <Navbar />
+      <>
+        This is token: {token} loggedIn?: {isLoggedIn.toString()}, username is:{' '}
+        {user.username}
+      </>
+      <button onClick={logout}>Logout</button>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/login' element={Login} />
+        <Route path='/signup' element={Signup} />
+      </Routes>
     </div>
   );
-};
+}
 
 export default App;
